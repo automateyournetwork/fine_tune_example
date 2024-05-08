@@ -133,3 +133,6 @@ model, tokenizer = setup_chat_format(model, tokenizer)
 model = PeftModel.from_pretrained(model, new_model)
 print("merge and unload model")
 model = model.merge_and_unload().to("cuda")
+
+model.push_to_hub(new_model, use_temp_dir=False)
+tokenizer.push_to_hub(new_model, use_temp_dir=False)
