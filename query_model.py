@@ -59,7 +59,7 @@ def test_model(model_name, model, tokenizer, questions, device, output_file):
         print(f"\nTesting {model_name}:")
         for question in questions:
             answer = ask_model(question, model, tokenizer, device)
-            output = f"Question: {question}\nAnswer: {answer}\n"
+            output = f"{question}\n\n{answer}\n"
             file.write(output)
             print(output)
 
@@ -69,7 +69,7 @@ def test_model_with_llm(model_name, llm, questions, output_file):
         print(f"\nTesting {model_name}:")
         for question in questions:
             response = llm.invoke(question)
-            output = f"{question}\n{response}\n"
+            output = f"{question}\n\n{response}\n"
             file.write(output)
             print(output)
 
