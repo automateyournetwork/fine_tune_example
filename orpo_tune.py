@@ -12,6 +12,7 @@ from transformers import (
 )
 from trl import ORPOConfig, ORPOTrainer, setup_chat_format
 
+# Configuration for GPU and torch dtype
 if torch.cuda.is_available() and torch.cuda.get_device_capability()[0] >= 8:
     attn_implementation = "flash_attention_2"
     torch_dtype = torch.bfloat16
@@ -19,11 +20,11 @@ else:
     attn_implementation = "eager"
     torch_dtype = torch.float16
 
-# Model
+# Model details
 base_model = "meta-llama/Meta-Llama-3-8B"
 new_model = "aicvd"
 
-# QLoRA config
+# QLoRA configuration
 bnb_config = BitsAndBytesConfig(
     load_in_4bit=True,
     bnb_4bit_quant_type="nf4",
@@ -31,7 +32,7 @@ bnb_config = BitsAndBytesConfig(
     bnb_4bit_use_double_quant=True,
 )
 
-# LoRA config
+# LoRA configuration
 peft_config = LoraConfig(
     r=16,
     lora_alpha=32,
@@ -44,7 +45,7 @@ peft_config = LoraConfig(
 # Load tokenizer
 tokenizer = AutoTokenizer.from_pretrained(base_model)
 
-# Load model
+# Load base model with quantization configuration
 model = AutoModelForCausalLM.from_pretrained(
     base_model,
     quantization_config=bnb_config,
@@ -63,7 +64,6 @@ print("dataset shuffle")
 dataset = dataset.shuffle(seed=42)
 
 # Apply chat template with ORPO-specific formatting
-
 def format_chat_template(row):
     role = "You are an expert on the Cisco Validated Design FlexPod Datacenter with Generative AI Inferencing Design and Deployment Guide."
     row["chosen"] = f'{role} {row["chosen"]}'
@@ -81,6 +81,7 @@ dataset = dataset.map(
 print("dataset train_test_split")
 dataset = dataset.train_test_split(test_size=0.01)
 
+# ORPO Configuration
 orpo_args = ORPOConfig(
     learning_rate=1e-4,
     beta=0.1,
@@ -129,8 +130,15 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 model, tokenizer = setup_chat_format(model, tokenizer)
 
-# Merge adapter with base model
+# Load LoRA adapter
 model = PeftModel.from_pretrained(model, new_model)
+
+# Explicitly save base model config (optional)
+model.config.to_json_file(f"{new_model}/adapter_config.json")
+
+# Save the LoRA adapter configuration file
+model.save_pretrained(new_model)
+
 print("merge and unload model")
 model = model.merge_and_unload().to("cuda")
 
