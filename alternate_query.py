@@ -1,9 +1,10 @@
 import torch
-from transformers import AutoTokenizer, pipeline, LlamaForCausalLM
-from peft import PeftModel
+from transformers import AutoTokenizer, LlamaForCausalLM, pipeline
 
-# Load tokenizer and model directly from "aicvd"
+# Load tokenizer directly from "aicvd"
 tokenizer = AutoTokenizer.from_pretrained("aicvd")
+
+# Load fine-tuned model directly from "aicvd"
 model = LlamaForCausalLM.from_pretrained("aicvd", torch_dtype=torch.float16, device_map="auto")
 model.to("cuda")
 
