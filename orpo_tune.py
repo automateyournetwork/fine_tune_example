@@ -133,12 +133,10 @@ model, tokenizer = setup_chat_format(model, tokenizer)
 # Load LoRA adapter
 model = PeftModel.from_pretrained(model, new_model)
 
-# Explicitly save base model config (optional)
-model.config.to_json_file(f"{new_model}/adapter_config.json")
-
 # Save the LoRA adapter configuration file
 model.save_pretrained(new_model)
 
+# Optionally merge and unload the LoRA adapter
 print("merge and unload model")
 model = model.merge_and_unload().to("cuda")
 
