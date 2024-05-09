@@ -9,6 +9,8 @@ from transformers import (
     BitsAndBytesConfig,
 )
 from trl import ORPOConfig, ORPOTrainer, setup_chat_format
+# Push all files to the Hugging Face Hub manually
+from huggingface_hub import HfApi, HfFolder
 
 # Configuration for GPU and torch dtype
 if torch.cuda.is_available() and torch.cuda.get_device_capability()[0] >= 8:
@@ -141,5 +143,22 @@ model.save_pretrained(new_model)
 print("merge and unload model")
 model = model.merge_and_unload().to("cuda")
 
-model.push_to_hub(new_model, use_temp_dir=False)
-tokenizer.push_to_hub(new_model, use_temp_dir=False)
+api = HfApi()
+repo_id = f"automateyournetwork/{new_model}"
+
+# Push files using push_to_hub
+model.push_to_hub(repo_id, use_temp_dir=False)
+tokenizer.push_to_hub(repo_id, use_temp_dir=False)
+
+# Manually push the adapter files
+api.upload_file(
+    path_or_fileobj=f"{new_model}/adapter_config.json",
+    path_in_repo="adapter_config.json",
+    repo_id=repo_id,
+)
+
+api.upload_file(
+    path_or_fileobj=f"{new_model}/adapter_model.safetensors",
+    path_in_repo="adapter_model.safetensors",
+    repo_id=repo_id,
+)
