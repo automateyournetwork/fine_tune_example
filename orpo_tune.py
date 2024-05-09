@@ -1,10 +1,8 @@
 import gc
 import os
-
 import torch
-import wandb
 from datasets import load_dataset
-from peft import LoraConfig, PeftModel, prepare_model_for_kbit_training
+from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -56,6 +54,9 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 model, tokenizer = setup_chat_format(model, tokenizer)
 model = prepare_model_for_kbit_training(model)
+
+# Apply LoRA adapter using get_peft_model
+model = get_peft_model(model, peft_config)
 
 file_path = "training_dataset.jsonl"
 print("dataset load")
@@ -130,10 +131,10 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 model, tokenizer = setup_chat_format(model, tokenizer)
 
-# Load LoRA adapter
-model = PeftModel.from_pretrained(model, new_model)
+# Load LoRA adapter into model
+model = get_peft_model(model, peft_config)
 
-# Save the LoRA adapter configuration file
+# Save the LoRA adapter configuration file (adapter_config.json)
 model.save_pretrained(new_model)
 
 # Optionally merge and unload the LoRA adapter
