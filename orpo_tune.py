@@ -2,7 +2,7 @@ import gc
 import os
 import torch
 from datasets import load_dataset
-from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
+from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training, PeftModel
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -11,7 +11,6 @@ from transformers import (
 from trl import ORPOConfig, ORPOTrainer, setup_chat_format
 from huggingface_hub import HfApi, create_repo, upload_file
 
-# Configuration for GPU and torch dtype
 if torch.cuda.is_available() and torch.cuda.get_device_capability()[0] >= 8:
     attn_implementation = "flash_attention_2"
     torch_dtype = torch.bfloat16
@@ -19,11 +18,11 @@ else:
     attn_implementation = "eager"
     torch_dtype = torch.float16
 
-# Model details
+# Model
 base_model = "meta-llama/Meta-Llama-3-8B"
 new_model = "aicvd"
 
-# QLoRA configuration
+# QLoRA config
 bnb_config = BitsAndBytesConfig(
     load_in_4bit=True,
     bnb_4bit_quant_type="nf4",
@@ -31,7 +30,7 @@ bnb_config = BitsAndBytesConfig(
     bnb_4bit_use_double_quant=True,
 )
 
-# LoRA configuration
+# LoRA config
 peft_config = LoraConfig(
     r=16,
     lora_alpha=32,
@@ -44,7 +43,7 @@ peft_config = LoraConfig(
 # Load tokenizer
 tokenizer = AutoTokenizer.from_pretrained(base_model)
 
-# Load base model with quantization configuration
+# Load model
 model = AutoModelForCausalLM.from_pretrained(
     base_model,
     quantization_config=bnb_config,
@@ -56,9 +55,6 @@ model = AutoModelForCausalLM.from_pretrained(
 model, tokenizer = setup_chat_format(model, tokenizer)
 model = prepare_model_for_kbit_training(model)
 
-# Apply LoRA adapter using get_peft_model
-model = get_peft_model(model, peft_config)
-
 file_path = "training_dataset.jsonl"
 print("dataset load")
 dataset = load_dataset('json', data_files={'train': file_path}, split='all')
@@ -66,6 +62,7 @@ print("dataset shuffle")
 dataset = dataset.shuffle(seed=42)
 
 # Apply chat template with ORPO-specific formatting
+
 def format_chat_template(row):
     role = "You are an expert on the Cisco Validated Design FlexPod Datacenter with Generative AI Inferencing Design and Deployment Guide."
     row["chosen"] = f'{role} {row["chosen"]}'
@@ -83,7 +80,6 @@ dataset = dataset.map(
 print("dataset train_test_split")
 dataset = dataset.train_test_split(test_size=0.01)
 
-# ORPO Configuration
 orpo_args = ORPOConfig(
     learning_rate=1e-4,
     beta=0.1,
@@ -132,20 +128,10 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 model, tokenizer = setup_chat_format(model, tokenizer)
 
-# Load LoRA adapter into model
-model = get_peft_model(model, peft_config)
-
-# Save the LoRA adapter configuration file (adapter_config.json)
-model.save_pretrained(new_model)
-
-# Optionally merge and unload the LoRA adapter
+# Merge adapter with base model
+model = PeftModel.from_pretrained(model, new_model)
 print("merge and unload model")
 model = model.merge_and_unload().to("cuda")
-
-# Push model and tokenizer to the Hugging Face Hub
-repo_id = f"automateyournetwork/{new_model}"
-model.push_to_hub(repo_id, use_temp_dir=False)
-tokenizer.push_to_hub(repo_id, use_temp_dir=False)
 
 # Define the path to your files
 adapter_config_path = "aicvd/adapter_config.json"
