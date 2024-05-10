@@ -9,7 +9,7 @@ from transformers import (
     BitsAndBytesConfig,
 )
 from trl import ORPOConfig, ORPOTrainer, setup_chat_format
-from huggingface_hub import HfApi
+from huggingface_hub import HfApi, create_repo, upload_file
 
 # Configuration for GPU and torch dtype
 if torch.cuda.is_available() and torch.cuda.get_device_capability()[0] >= 8:
@@ -146,3 +146,29 @@ model = model.merge_and_unload().to("cuda")
 repo_id = f"automateyournetwork/{new_model}"
 model.push_to_hub(repo_id, use_temp_dir=False)
 tokenizer.push_to_hub(repo_id, use_temp_dir=False)
+
+# Define the path to your files
+adapter_config_path = "aicvd/adapter_config.json"
+adapter_model_path = "aicvd/adapter_model.safetensors"
+repo_name = "automateyournetwork/aicvd"
+
+# Initialize the HfApi client
+api = HfApi()
+
+# Ensure the repository exists
+create_repo(repo_name, exist_ok=True)
+
+# Upload files individually
+api.upload_file(
+    path_or_fileobj=adapter_config_path,
+    path_in_repo="adapter_config.json",
+    repo_id=repo_name,
+    repo_type="model"
+)
+
+api.upload_file(
+    path_or_fileobj=adapter_model_path,
+    path_in_repo="adapter_model.safetensors",
+    repo_id=repo_name,
+    repo_type="model"
+)
