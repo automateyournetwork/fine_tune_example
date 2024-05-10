@@ -172,3 +172,10 @@ api.upload_file(
     repo_id=repo_name,
     repo_type="model"
 )
+
+api.upload_file(
+    path_or_fileobj=adapter_model_path,
+    path_in_repo="training_args.bin",
+    repo_id=repo_name,
+    repo_type="model"
+)
