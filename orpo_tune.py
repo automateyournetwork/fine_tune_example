@@ -137,6 +137,9 @@ model = model.merge_and_unload().to("cuda")
 adapter_config_path = "aicvd/adapter_config.json"
 adapter_model_path = "aicvd/adapter_model.safetensors"
 repo_name = "automateyournetwork/aicvd"
+# Push model and tokenizer to the Hugging Face Hub
+model.push_to_hub(repo_name, use_temp_dir=False)
+tokenizer.push_to_hub(repo_name, use_temp_dir=False)
 
 # Initialize the HfApi client
 api = HfApi()
