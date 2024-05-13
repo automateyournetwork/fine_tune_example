@@ -37,12 +37,12 @@ def generate_dataset(llm, csv_file):
 
     question_templates = [
         "What is the <VLAN Name> VLAN ID?",
-        "What is the VLAN ID <VLAN ID>'s subnet?",
-        "What is the <VLAN Name> gateway?",
-        "What is the purpose of the <VLAN Name>?",
-        "What is the purpose of VLAN ID <VLAN ID>?",
-        "What is the subnet for <VLAN Name>?",
-        "What is the gateway for VLAN ID <VLAN ID>?"
+        # "What is the VLAN ID <VLAN ID>'s subnet?",
+        # "What is the <VLAN Name> gateway?",
+        # "What is the purpose of the <VLAN Name>?",
+        # "What is the purpose of VLAN ID <VLAN ID>?",
+        # "What is the subnet for <VLAN Name>?",
+        # "What is the gateway for VLAN ID <VLAN ID>?"
     ]
 
     with open(csv_file, 'r') as file:
@@ -55,7 +55,7 @@ def generate_dataset(llm, csv_file):
                 context += f", IP Gateway - {row['IP Gateway']}"
 
             # Generate 50 prompts per row
-            for _ in range(50):
+            for _ in range(1):
                 template = random.choice(question_templates)
                 question_template = template.replace("<VLAN Name>", row['Name']).replace("<VLAN ID>", row['VLAN ID'])
                 question = generate_question(llm, context, question_template)
