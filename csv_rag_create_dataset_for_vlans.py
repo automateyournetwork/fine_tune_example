@@ -48,11 +48,7 @@ def generate_dataset(llm, csv_file):
     with open(csv_file, 'r') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            context = f"VLAN ID - {row['VLAN ID']}, Name - {row['Name']}, Usage - {row['Usage']}"
-            if row['IP Subnet'] != "N/A":
-                context += f", IP Subnet - {row['IP Subnet']}"
-            if row['IP Gateway'] != "N/A":
-                context += f", IP Gateway - {row['IP Gateway']}"
+            context = f"VLAN ID - {row['VLAN ID']}, Name - {row['Name']}, Usage - {row['Usage']}, IP Subnet - {row['IP Subnet']},IP Gateway - {row['IP Gateway']}"
 
             # Generate 50 prompts per row
             for _ in range(50):
