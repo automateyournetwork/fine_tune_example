@@ -10,8 +10,8 @@ def generate_question(llm, context, question_template):
     return response.strip()
 
 # Function to generate the chosen (correct) answer
-def generate_chosen_response(question, llm):
-    chosen_prompt = f"This data is being used to fine-tune an LLM. Based on the given information, please provide the chosen answer for this question: {question}"
+def generate_chosen_response(question, llm, context):
+    chosen_prompt = f"This data is being used to fine-tune an LLM. Based on the given information, please provide the chosen answer for this question: {question}\n\nContext: {context}"
     response = llm.invoke(chosen_prompt)
     print(f"Chosen response: {response.strip()}")
     return response.strip()
@@ -48,14 +48,18 @@ def generate_dataset(llm, csv_file):
     with open(csv_file, 'r') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            context = f"VLAN ID - {row['VLAN ID']}, Name - {row['Name']}, Usage - {row['Usage']}, IP Subnet - {row['IP Subnet']},IP Gateway - {row['IP Gateway']}"
+            context = f"VLAN ID - {row['VLAN ID']}, Name - {row['Name']}, Usage - {row['Usage']}"
+            if row['IP Subnet'] != "N/A":
+                context += f", IP Subnet - {row['IP Subnet']}"
+            if row['IP Gateway'] != "N/A":
+                context += f", IP Gateway - {row['IP Gateway']}"
 
             # Generate 50 prompts per row
             for _ in range(50):
                 template = random.choice(question_templates)
                 question_template = template.replace("<VLAN Name>", row['Name']).replace("<VLAN ID>", row['VLAN ID'])
                 question = generate_question(llm, context, question_template)
-                chosen_answer = generate_chosen_response(question, llm)
+                chosen_answer = generate_chosen_response(question, llm, context)
                 rejected_answer = generate_rejected_response(chosen_answer, llm)
                 dataset.append({
                     'prompt': question,
@@ -67,7 +71,7 @@ def generate_dataset(llm, csv_file):
     save_dataset_as_jsonl(dataset, 'manual_training_dataset.jsonl')
 
 # Initialize the Llama model with the specified model name
-llm = Ollama(model="llama3")
+llm = Ollama(model="mistral")
 
 # Generate the dataset from the provided CSV file
 generate_dataset(llm, 'training_dataset.csv')
