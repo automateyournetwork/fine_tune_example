@@ -98,7 +98,7 @@ def generate_dataset(llm, csv_file):
                 context += f", IP Gateway - {row['IP Gateway']}"
 
             # Generate 50 prompts per row
-            for _ in range(5):
+            for _ in range(50):
                 template = random.choice(question_templates)
                 question_template = template.replace("<VLAN Name>", row['Name']).replace("<VLAN ID>", row['VLAN ID'])
                 question = generate_question(llm, context, question_template)
@@ -111,7 +111,7 @@ def generate_dataset(llm, csv_file):
                 })
 
     # Save the dataset to a JSONL file
-    save_dataset_as_jsonl(dataset, 'manual_training_dataset.jsonl')
+    save_dataset_as_jsonl(dataset, 'training_dataset.jsonl')
 
 # Initialize the Llama model with the specified model name
 llm = Ollama(model="mistral")
