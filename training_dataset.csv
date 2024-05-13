@@ -1,0 +1,14 @@
+VLAN ID,Name,Usage,IP Subnet,IP Gateway
+2,Native-VLAN,Use VLAN 2 as native VLAN instead ofdefault VLAN (1),N/A 
+1020,OOB-MGMT-VLAN,Out-of-band management VLAN to connect management ports for various devices,10.102.0.0/24,10.102.0.254
+1021,IB-MGMT-VLAN,In-band management VLAN utilized for all in-band management connectivity for example ESXi hosts or VM management,10.102.1.0/24,10.102.1.254
+1022,OCP-MGMT,OCP management traffic VLAN used in place of VM-Traffic VLAN,10.102.2.0/24,10.102.2.254
+3050,NFS-VLAN,NFS VLAN for mounting datastores in ESXi servers for VMs,192.168.50.0/24,IP gateway is not needed since no routing is required for these subnets
+3010,iSCSI-A,iSCSI-A path for storage traffic including boot-from-san traffic,192.168.10.0/24,IP gateway is not needed since no routing is required for these subnets
+3020,iSCSI-B,iSCSI-B path for storage traffic including boot-from-san traffic,192.168.20.0/24,IP gateway is not needed since no routing is required for these subnets
+3030,NVMe-TCP-A,NVMe-TCP-A path when using NVMe-TCP,192.168.30.0/24,IP gateway is not needed since no routing is required for these subnets
+3040,NVMe-TCP-B,NVMe-TCP-B path when using NVMe-TCP,192.168.40.0/24,IP gateway is not needed since no routing is required for these subnets
+3000,vMotion,VMware vMotion traffic,192.168.0.0/24,IP gateway is not needed since no routing is required for these subnets
+3052,OCP-NFS,NFS VLAN for OCP persistent storage and OCP cluster and support VMs,192.168.52.0/24,IP gateway is not needed since no routing is required for these subnets
+3032,OCP-NVMe-TCP-A,NVMe-TCP-A path when using NVMe-TCP for persistent storage,192.168.32.0/24,IP gateway is not needed since no routing is required for these subnets
+3042,OCP-NVMe-TCP-B,NVMe-TCP-B path when using NVMe-TCP for persistent storage,192.168.42.0/24,IP gateway is not needed since no routing is required for these subnets
