@@ -81,16 +81,16 @@ print("dataset train_test_split")
 dataset = dataset.train_test_split(test_size=0.01)
 
 orpo_args = ORPOConfig(
-    learning_rate=1e-4,
+    learning_rate=5e-5,  # Lower learning rate
     beta=0.1,
     lr_scheduler_type="linear",
     max_length=1024,
     max_prompt_length=512,
-    per_device_train_batch_size=2,
-    per_device_eval_batch_size=2,
+    per_device_train_batch_size=1,  # Smaller batch size
+    per_device_eval_batch_size=1,   # Smaller batch size for evaluation
     gradient_accumulation_steps=4,
     optim="paged_adamw_8bit",
-    num_train_epochs=3,
+    num_train_epochs=5,  # Increase the number of epochs
     evaluation_strategy="steps",
     eval_steps=100,
     logging_steps=100,
