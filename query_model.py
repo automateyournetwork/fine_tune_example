@@ -1,6 +1,6 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from peft import PeftModel, PeftModelForCausalLM
+from peft import PeftModelForCausalLM
 from torch.cuda.amp import autocast
 from langchain_community.llms import Ollama
 
@@ -31,7 +31,7 @@ def main():
         return
 
     # Example inference to check the model
-    questions = questions = [
+    questions = [
         "What is the VLAN ID for the Native-VLAN in the FlexPod environment?",
         "What is the usage of the Native-VLAN in the FlexPod environment?",
         "What is the VLAN ID for the OOB-MGMT-VLAN in the FlexPod environment?",
@@ -113,7 +113,8 @@ def test_model_with_llm(model_name, llm, questions, output_file):
             print(output)
 
 def ask_model(question, model, tokenizer, device, max_length=128, num_beams=3):
-    prompt = f"{question}\n "
+    role = "You are an expert on the Cisco Validated Design FlexPod Datacenter with Generative AI Inferencing Design and Deployment Guide."
+    prompt = f"{role} {question}\n "
 
     inputs = tokenizer(prompt, return_tensors="pt", padding=True, truncation=True, max_length=max_length)
     inputs = {k: v.to(device) for k, v in inputs.items()}
