@@ -114,9 +114,8 @@ def test_model_with_llm(model_name, llm, questions, output_file):
 def ask_model(question, model, tokenizer, device, max_length=128, num_beams=3):
     #role = "You are an expert on the Cisco Validated Design FlexPod Datacenter with Generative AI Inferencing Design and Deployment Guide."
     #prompt = f"{role} {question}\n "
-    prompt = question
 
-    inputs = tokenizer(prompt, return_tensors="pt", padding=True, truncation=True, max_length=max_length)
+    inputs = tokenizer(question, return_tensors="pt", padding=True, truncation=True, max_length=max_length)
     inputs = {k: v.to(device) for k, v in inputs.items()}
 
     with torch.no_grad():
