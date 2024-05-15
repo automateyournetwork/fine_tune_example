@@ -4,7 +4,7 @@ from peft import PeftModelForCausalLM
 from torch.cuda.amp import autocast
 from langchain_community.llms import Ollama
 
-def main():   
+def main():
     model_dir = "./aicvd"
     base_model_name = "meta-llama/Meta-Llama-3-8B"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -30,7 +30,6 @@ def main():
         print(f"Failed to load fine-tuned model: {e}")
         return
 
-    # Example inference to check the model
     questions = [
         "What is the VLAN ID for the Native-VLAN in the FlexPod environment? Please provide a direct answer.",
         "What is the usage of the Native-VLAN in the FlexPod environment? Please provide a direct answer.",
@@ -126,7 +125,9 @@ def ask_model(question, model, tokenizer, device, max_length=128, num_beams=3):
                 attention_mask=inputs['attention_mask'],
                 max_length=max_length,
                 num_beams=num_beams,
-                early_stopping=True
+                early_stopping=True,
+                no_repeat_ngram_size=2,  # Added to reduce repetitive phrases
+                num_return_sequences=1   # Generating only one response
             )
 
     return tokenizer.decode(outputs[0], skip_special_tokens=True).strip()
