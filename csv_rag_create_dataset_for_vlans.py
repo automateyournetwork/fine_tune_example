@@ -1,5 +1,6 @@
 import csv
 import json
+import random
 from langchain_community.llms import Ollama
 
 # Function to generate the chosen (correct) answer
