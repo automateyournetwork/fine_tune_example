@@ -100,7 +100,7 @@ def generate_dataset(llm, csv_file, entries_per_row=25):
                     'chosen': f"Answer: {chosen_answer}",
                     'rejected': f"Answer: {rejected_answer}"
                 })
-
+        print(dataset)
     return dataset
 
 # Main function to generate datasets with two different models
