@@ -1,26 +1,17 @@
 import csv
 import json
-import random
 from langchain_community.llms import Ollama
-
-# Function to generate a question from the detailed FlexPod information
-def generate_question(llm, context, question_template):
-    prompt = f"The following VLAN information is from the Cisco Validated Design FlexPod Datacenter with Generative AI Inferencing Design and Deployment Guide and the following information is taken from the guide:\n{context}\n\nGenerate a question similar to this related to the VLAN:\n{question_template}. Generate a factual response and nothing else. Keep your answers short and to the point."
-    response = llm.invoke(prompt)
-    return response.strip()
 
 # Function to generate the chosen (correct) answer
 def generate_chosen_response(question, llm, context):
     chosen_prompt = f"This data is being used to fine-tune an LLM. Based on the given information, please provide the chosen answer for this question: {question}\n\nContext: {context}\n\nRespond with the answer only."
     response = llm.invoke(chosen_prompt)
-    print(f"Chosen response: {response.strip()}")
     return response.strip()
 
 # Function to generate the rejected (incorrect) answer
 def generate_rejected_response(chosen_response, llm):
     rejected_prompt = f"Here is the chosen (correct) response:\n{chosen_response}\nCould you alter it slightly to be incorrect? Respond with the answer only."
     response = llm.invoke(rejected_prompt)
-    print(f"Rejected response: {response.strip()}")
     return response.strip()
 
 # Function to create and save the dataset as JSONL
@@ -97,17 +88,15 @@ def generate_dataset(llm, csv_file):
             if row['IP Gateway'] != "N/A":
                 context += f", IP Gateway - {row['IP Gateway']}"
 
-            # Generate 50 prompts per row
-            for _ in range(50):
-                template = random.choice(question_templates)
-                question_template = template.replace("<VLAN Name>", row['Name']).replace("<VLAN ID>", row['VLAN ID'])
-                question = generate_question(llm, context, question_template)
+            # Use predefined questions directly from the list
+            for template in question_templates:
+                question = template.replace("<VLAN Name>", row['Name']).replace("<VLAN ID>", row['VLAN ID'])
                 chosen_answer = generate_chosen_response(question, llm, context)
                 rejected_answer = generate_rejected_response(chosen_answer, llm)
                 dataset.append({
                     'prompt': question,
-                    'chosen': chosen_answer,
-                    'rejected': rejected_answer
+                    'chosen': f"Answer: {chosen_answer}",
+                    'rejected': f"Answer: {rejected_answer}"
                 })
 
     # Save the dataset to a JSONL file
