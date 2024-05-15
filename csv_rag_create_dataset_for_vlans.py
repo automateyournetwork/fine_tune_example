@@ -7,12 +7,14 @@ from langchain_community.llms import Ollama
 def generate_chosen_response(question, llm, context):
     chosen_prompt = f"This data is being used to fine-tune an LLM. Based on the given information, please provide the chosen answer for this question: {question}\n\nContext: {context}\n\nRespond with the answer only."
     response = llm.invoke(chosen_prompt)
+    print(f"Chosen:" {response})
     return response.strip()
 
 # Function to generate the rejected (incorrect) answer
 def generate_rejected_response(chosen_response, llm):
     rejected_prompt = f"Here is the chosen (correct) response:\n{chosen_response}\nCould you alter it slightly to be incorrect? Respond with the answer only."
     response = llm.invoke(rejected_prompt)
+    print(f"Rejected:" { response })
     return response.strip()
 
 # Function to create and save the dataset as JSONL
@@ -100,7 +102,6 @@ def generate_dataset(llm, csv_file, entries_per_row=25):
                     'chosen': f"Answer: {chosen_answer}",
                     'rejected': f"Answer: {rejected_answer}"
                 })
-        print(dataset)
     return dataset
 
 # Main function to generate datasets with two different models
