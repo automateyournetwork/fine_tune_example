@@ -1,3 +1,4 @@
+import csv
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from peft import PeftModelForCausalLM
@@ -41,47 +42,7 @@ def main():
         "What gateway is assigned to VLAN ID <VLAN ID>?",
         "How is the <VLAN Name> utilized?",
         "What function does the <VLAN Name> serve?",
-        "What role does VLAN ID <VLAN ID> play?",
-        "Which IP subnet is configured for <VLAN Name>?",
-        "Specify the gateway IP for <VLAN Name>.",
-        "For what purpose is the <VLAN Name> used?",
-        "What is the VLAN ID assigned to <VLAN Name>?",
-        "What is the subnet mask for VLAN ID <VLAN ID>?",
-        "What is the default gateway for the <VLAN Name>?",
-        "What is the primary function of the <VLAN Name>?",
-        "What is the primary purpose of VLAN ID <VLAN ID>?",
-        "Which subnet is allocated to <VLAN Name>?",
-        "Identify the default gateway for VLAN ID <VLAN ID>.",
-        "What is the assigned VLAN ID for the <VLAN Name>?",
-        "What IP subnet does VLAN ID <VLAN ID> correspond to?",
-        "What is the configured gateway for the <VLAN Name>?",
-        "What is the main purpose of the <VLAN Name>?",
-        "Which subnet is utilized by VLAN ID <VLAN ID>?",
-        "What VLAN ID is used for <VLAN Name> in FlexPod?",
-        "What subnet is used by <VLAN Name> for FlexPod?",
-        "What is the gateway IP for VLAN ID <VLAN ID>?",
-        "What does the <VLAN Name> VLAN do?",
-        "What is the function of VLAN ID <VLAN ID>?",
-        "What subnet is assigned to <VLAN Name>?",
-        "What is the default gateway for VLAN ID <VLAN ID>?",
-        "How is VLAN ID <VLAN ID> utilized?",
-        "What is the IP subnet for <VLAN Name>?",
-        "What gateway does <VLAN Name> use?",
-        "What is the purpose of VLAN ID <VLAN ID> in FlexPod?",
-        "Which IP subnet is used for VLAN ID <VLAN ID>?",
-        "What is the purpose of the VLAN ID <VLAN ID>?",
-        "What is the role of <VLAN Name> in FlexPod?",
-        "Identify the subnet for VLAN ID <VLAN ID>.",
-        "What is the purpose of <VLAN Name> VLAN?",
-        "What is the gateway for <VLAN Name> in FlexPod?",
-        "What is the VLAN ID of <VLAN Name> in FlexPod?",
-        "What is the IP subnet of VLAN ID <VLAN ID>?",
-        "Explain the role of <VLAN Name> in FlexPod.",
-        "What subnet does VLAN ID <VLAN ID> use?",
-        "What is the primary role of <VLAN Name>?",
-        "What function does VLAN ID <VLAN ID> serve in FlexPod?",
-        "What is the assigned IP subnet for <VLAN Name>?",
-        "Which gateway is used for VLAN ID <VLAN ID>?"
+        "What role does VLAN ID <VLAN ID> play?"
     ]
 
     # Define the actual dataset
@@ -104,13 +65,17 @@ def main():
     # Generate questions based on the dataset and templates
     questions = generate_questions_from_dataset(dataset, question_templates)
 
-    output_file = "model_output.txt"
+    csv_file = "model_output.csv"
     # Clear the file first
-    with open(output_file, "w") as file:
+    with open(csv_file, "w") as file:
         file.write("")
 
-    test_model("Fine-Tuned Model", fine_tuned_model, tokenizer, questions, device, output_file)
-    test_model_with_llm("Base Model", llm, questions, output_file)
+    with open(csv_file, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Prompt", "Llama3 (Control) Answer", "Fine-Tuned Answer"])
+
+        test_model("Fine-Tuned Model", fine_tuned_model, tokenizer, questions, device, writer)
+        test_model_with_llm("Base Model", llm, questions, writer)
 
 def generate_questions_from_dataset(dataset, question_templates):
     questions = []
@@ -120,25 +85,19 @@ def generate_questions_from_dataset(dataset, question_templates):
             questions.append(question)
     return questions
 
-def test_model(model_name, model, tokenizer, questions, device, output_file):
-    with open(output_file, "a") as file:  # Open file in append mode
-        file.write(f"\nTesting {model_name}:\n")
-        print(f"\nTesting {model_name}:")
-        for question in questions:
-            answer = ask_model(question, model, tokenizer, device)
-            output = f"{question}\n\n{answer}\n"
-            file.write(output)
-            print(output)
+def test_model(model_name, model, tokenizer, questions, device, writer):
+    print(f"\nTesting {model_name}:")
+    for question in questions:
+        answer = ask_model(question, model, tokenizer, device)
+        writer.writerow([question, "", answer])
+        print(f"Q: {question}\nA: {answer}\n")
 
-def test_model_with_llm(model_name, llm, questions, output_file):
-    with open(output_file, "a") as file:  # Open file in append mode
-        file.write(f"\nTesting {model_name}:\n")
-        print(f"\nTesting {model_name}:")
-        for question in questions:
-            response = llm.invoke(question)
-            output = f"{question}\n\n{response}\n"
-            file.write(output)
-            print(output)
+def test_model_with_llm(model_name, llm, questions, writer):
+    print(f"\nTesting {model_name}:")
+    for question in questions:
+        response = llm.invoke(question)
+        writer.writerow([question, response, ""])
+        print(f"Q: {question}\nA: {response}\n")
 
 def ask_model(question, model, tokenizer, device, max_length=128, num_beams=3):
     inputs = tokenizer(question, return_tensors="pt", padding=True, truncation=True, max_length=max_length)
