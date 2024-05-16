@@ -91,35 +91,31 @@ def generate_dataset(llm, csv_file, entries_per_row=25):
             if row['IP Gateway'] != "N/A":
                 context += f", IP Gateway - {row['IP Gateway']}"
 
-            # Use predefined questions directly from the list
-            for _ in range(entries_per_row):
-                template = random.choice(question_templates)
-                question = template.replace("<VLAN Name>", row['Name']).replace("<VLAN ID>", row['VLAN ID'])
-                chosen_answer = generate_chosen_response(question, llm, context)
-                rejected_answer = generate_rejected_response(chosen_answer, llm)
-                dataset.append({
-                    'prompt': question,
-                    'chosen': f"Answer: {chosen_answer}",
-                    'rejected': f"Answer: {rejected_answer}"
-                })
+            template = random.choice(question_templates)
+            question = template.replace("<VLAN Name>", row['Name']).replace("<VLAN ID>", row['VLAN ID'])
+            chosen_answer = generate_chosen_response(question, llm, context)
+            rejected_answer = generate_rejected_response(chosen_answer, llm)
+            dataset.append({
+                'prompt': question,
+                'chosen': f"Answer: {chosen_answer}",
+                'rejected': f"Answer: {rejected_answer}"
+            })
     return dataset
 
 # Main function to generate datasets with two different models
 def main():
     csv_file = 'training_dataset.csv'
-    total_entries = 1300
-    entries_per_row = total_entries // 2 // 2  # 2 models, 2 passes each
 
     # Initialize the Llama model with the specified model names
     llm_mistral = Ollama(model="mistral")
     llm_llama3 = Ollama(model="llama3")
 
     # Generate dataset with Mistral model
-    dataset_mistral = generate_dataset(llm_mistral, csv_file, entries_per_row)
+    dataset_mistral = generate_dataset(llm_mistral, csv_file)
     save_dataset_as_jsonl(dataset_mistral, 'training_dataset_mistral.jsonl')
 
     # Generate dataset with Llama3 model
-    dataset_llama3 = generate_dataset(llm_llama3, csv_file, entries_per_row)
+    dataset_llama3 = generate_dataset(llm_llama3, csv_file)
     save_dataset_as_jsonl(dataset_llama3, 'training_dataset_llama3.jsonl')
 
 if __name__ == "__main__":
