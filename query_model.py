@@ -30,58 +30,79 @@ def main():
         print(f"Failed to load fine-tuned model: {e}")
         return
 
-    questions = [
-        "What is the VLAN ID for the Native-VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the usage of the Native-VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the VLAN ID for the OOB-MGMT-VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the subnet for the OOB-MGMT-VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the gateway for the OOB-MGMT-VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the name for VLAN ID 1020 in the FlexPod environment? Please provide a direct answer.",
-        "What is the IP subnet used for VLAN ID 1020 in the FlexPod environment? Please provide a direct answer.",
-        "What is the usage of VLAN ID 1020 in the FlexPod environment? Please provide a direct answer.",
-        "What is the VLAN ID for the IB-MGMT-VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the subnet for the IB-MGMT-VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the gateway for the IB-MGMT-VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the name for VLAN ID 1021 in the FlexPod environment? Please provide a direct answer.",
-        "What is the IP subnet used for VLAN ID 1021 in the FlexPod environment? Please provide a direct answer.",
-        "What is the usage of VLAN ID 1021 in the FlexPod environment? Please provide a direct answer.",
-        "What is the VLAN ID for the OCP-MGMT VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the subnet for the OCP-MGMT VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the gateway for the OCP-MGMT VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the name for VLAN ID 1022 in the FlexPod environment? Please provide a direct answer.",
-        "What is the IP subnet used for VLAN ID 1022 in the FlexPod environment? Please provide a direct answer.",
-        "What is the usage of VLAN ID 1022 in the FlexPod environment? Please provide a direct answer.",
-        "What is the VLAN ID for the NFS-VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the subnet for the NFS-VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the usage of the NFS-VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the VLAN ID for the iSCSI-A VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the subnet for the iSCSI-A VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the gateway for the iSCSI-A VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the name for VLAN ID 3010 in the FlexPod environment? Please provide a direct answer.",
-        "What is the IP subnet used for VLAN ID 3010 in the FlexPod environment? Please provide a direct answer.",
-        "What is the usage of VLAN ID 3010 in the FlexPod environment? Please provide a direct answer.",
-        "What is the VLAN ID for the iSCSI-B VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the subnet for the iSCSI-B VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the gateway for the iSCSI-B VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the name for VLAN ID 3020 in the FlexPod environment? Please provide a direct answer.",
-        "What is the IP subnet used for VLAN ID 3020 in the FlexPod environment? Please provide a direct answer.",
-        "What is the usage of VLAN ID 3020 in the FlexPod environment? Please provide a direct answer.",
-        "What is the VLAN ID for the NVMe-TCP-A VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the subnet for the NVMe-TCP-A VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the gateway for the NVMe-TCP-A VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the name for VLAN ID 3030 in the FlexPod environment? Please provide a direct answer.",
-        "What is the IP subnet used for VLAN ID 3030 in the FlexPod environment? Please provide a direct answer.",
-        "What is the usage of VLAN ID 3030 in the FlexPod environment? Please provide a direct answer.",
-        "What is the VLAN ID for the NVMe-TCP-B VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the subnet for the NVMe-TCP-B VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the gateway for the NVMe-TCP-B VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the name for VLAN ID 3040 in the FlexPod environment? Please provide a direct answer.",
-        "What is the IP subnet used for VLAN ID 3040 in the FlexPod environment? Please provide a direct answer.",
-        "What is the usage of VLAN ID 3040 in the FlexPod environment? Please provide a direct answer.",
-        "What is the VLAN ID for the vMotion VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the subnet for the vMotion VLAN in the FlexPod environment? Please provide a direct answer.",
-        "What is the usage of the vMotion VLAN in the FlexPod environment? Please provide a direct answer."
+    # Define the questions based on the templates
+    question_templates = [
+        "What is the VLAN ID for the <VLAN Name>?",
+        "Which subnet is associated with VLAN ID <VLAN ID>?",
+        "Identify the gateway for the <VLAN Name>.",
+        "Describe the purpose of the <VLAN Name>.",
+        "Explain the purpose of VLAN ID <VLAN ID>.",
+        "What subnet does <VLAN Name> use?",
+        "What gateway is assigned to VLAN ID <VLAN ID>?",
+        "How is the <VLAN Name> utilized?",
+        "What function does the <VLAN Name> serve?",
+        "What role does VLAN ID <VLAN ID> play?",
+        "Which IP subnet is configured for <VLAN Name>?",
+        "Specify the gateway IP for <VLAN Name>.",
+        "For what purpose is the <VLAN Name> used?",
+        "What is the VLAN ID assigned to <VLAN Name>?",
+        "What is the subnet mask for VLAN ID <VLAN ID>?",
+        "What is the default gateway for the <VLAN Name>?",
+        "What is the primary function of the <VLAN Name>?",
+        "What is the primary purpose of VLAN ID <VLAN ID>?",
+        "Which subnet is allocated to <VLAN Name>?",
+        "Identify the default gateway for VLAN ID <VLAN ID>.",
+        "What is the assigned VLAN ID for the <VLAN Name>?",
+        "What IP subnet does VLAN ID <VLAN ID> correspond to?",
+        "What is the configured gateway for the <VLAN Name>?",
+        "What is the main purpose of the <VLAN Name>?",
+        "Which subnet is utilized by VLAN ID <VLAN ID>?",
+        "What VLAN ID is used for <VLAN Name> in FlexPod?",
+        "What subnet is used by <VLAN Name> for FlexPod?",
+        "What is the gateway IP for VLAN ID <VLAN ID>?",
+        "What does the <VLAN Name> VLAN do?",
+        "What is the function of VLAN ID <VLAN ID>?",
+        "What subnet is assigned to <VLAN Name>?",
+        "What is the default gateway for VLAN ID <VLAN ID>?",
+        "How is VLAN ID <VLAN ID> utilized?",
+        "What is the IP subnet for <VLAN Name>?",
+        "What gateway does <VLAN Name> use?",
+        "What is the purpose of VLAN ID <VLAN ID> in FlexPod?",
+        "Which IP subnet is used for VLAN ID <VLAN ID>?",
+        "What is the purpose of the VLAN ID <VLAN ID>?",
+        "What is the role of <VLAN Name> in FlexPod?",
+        "Identify the subnet for VLAN ID <VLAN ID>.",
+        "What is the purpose of <VLAN Name> VLAN?",
+        "What is the gateway for <VLAN Name> in FlexPod?",
+        "What is the VLAN ID of <VLAN Name> in FlexPod?",
+        "What is the IP subnet of VLAN ID <VLAN ID>?",
+        "Explain the role of <VLAN Name> in FlexPod.",
+        "What subnet does VLAN ID <VLAN ID> use?",
+        "What is the primary role of <VLAN Name>?",
+        "What function does VLAN ID <VLAN ID> serve in FlexPod?",
+        "What is the assigned IP subnet for <VLAN Name>?",
+        "Which gateway is used for VLAN ID <VLAN ID>?"
     ]
+
+    # Define the actual dataset
+    dataset = [
+        {"VLAN ID": "2", "Name": "Native-VLAN", "Usage": "Use VLAN 2 as native VLAN instead of default VLAN (1)", "IP Subnet": "N/A", "IP Gateway": "N/A"},
+        {"VLAN ID": "1020", "Name": "OOB-MGMT-VLAN", "Usage": "Out-of-band management VLAN to connect management ports for various devices", "IP Subnet": "10.102.0.0/24", "IP Gateway": "10.102.0.254"},
+        {"VLAN ID": "1021", "Name": "IB-MGMT-VLAN", "Usage": "In-band management VLAN utilized for all in-band management connectivity for example ESXi hosts or VM management", "IP Subnet": "10.102.1.0/24", "IP Gateway": "10.102.1.254"},
+        {"VLAN ID": "1022", "Name": "OCP-MGMT", "Usage": "OCP management traffic VLAN used in place of VM-Traffic VLAN", "IP Subnet": "10.102.2.0/24", "IP Gateway": "10.102.2.254"},
+        {"VLAN ID": "3050", "Name": "NFS-VLAN", "Usage": "NFS VLAN for mounting datastores in ESXi servers for VMs", "IP Subnet": "192.168.50.0/24", "IP Gateway": "N/A"},
+        {"VLAN ID": "3010", "Name": "iSCSI-A", "Usage": "iSCSI-A path for storage traffic including boot-from-san traffic", "IP Subnet": "192.168.10.0/24", "IP Gateway": "N/A"},
+        {"VLAN ID": "3020", "Name": "iSCSI-B", "Usage": "iSCSI-B path for storage traffic including boot-from-san traffic", "IP Subnet": "192.168.20.0/24", "IP Gateway": "N/A"},
+        {"VLAN ID": "3030", "Name": "NVMe-TCP-A", "Usage": "NVMe-TCP-A path when using NVMe-TCP", "IP Subnet": "192.168.30.0/24", "IP Gateway": "N/A"},
+        {"VLAN ID": "3040", "Name": "NVMe-TCP-B", "Usage": "NVMe-TCP-B path when using NVMe-TCP", "IP Subnet": "192.168.40.0/24", "IP Gateway": "N/A"},
+        {"VLAN ID": "3000", "Name": "vMotion", "Usage": "VMware vMotion traffic", "IP Subnet": "192.168.0.0/24", "IP Gateway": "N/A"},
+        {"VLAN ID": "3052", "Name": "OCP-NFS", "Usage": "NFS VLAN for OCP persistent storage and OCP cluster and support VMs", "IP Subnet": "192.168.52.0/24", "IP Gateway": "N/A"},
+        {"VLAN ID": "3032", "Name": "OCP-NVMe-TCP-A", "Usage": "NVMe-TCP-A path when using NVMe-TCP for persistent storage", "IP Subnet": "192.168.32.0/24", "IP Gateway": "N/A"},
+        {"VLAN ID": "3042", "Name": "OCP-NVMe-TCP-B", "Usage": "NVMe-TCP-B path when using NVMe-TCP for persistent storage", "IP Subnet": "192.168.42.0/24", "IP Gateway": "N/A"}
+    ]
+
+    # Generate questions based on the dataset and templates
+    questions = generate_questions_from_dataset(dataset, question_templates)
 
     output_file = "model_output.txt"
     # Clear the file first
@@ -90,6 +111,14 @@ def main():
 
     test_model("Fine-Tuned Model", fine_tuned_model, tokenizer, questions, device, output_file)
     test_model_with_llm("Base Model", llm, questions, output_file)
+
+def generate_questions_from_dataset(dataset, question_templates):
+    questions = []
+    for entry in dataset:
+        for template in question_templates:
+            question = template.replace("<VLAN Name>", entry["Name"]).replace("<VLAN ID>", entry["VLAN ID"])
+            questions.append(question)
+    return questions
 
 def test_model(model_name, model, tokenizer, questions, device, output_file):
     with open(output_file, "a") as file:  # Open file in append mode
@@ -112,9 +141,6 @@ def test_model_with_llm(model_name, llm, questions, output_file):
             print(output)
 
 def ask_model(question, model, tokenizer, device, max_length=128, num_beams=3):
-    #role = "You are an expert on the Cisco Validated Design FlexPod Datacenter with Generative AI Inferencing Design and Deployment Guide."
-    #prompt = f"{role} {question}\n "
-
     inputs = tokenizer(question, return_tensors="pt", padding=True, truncation=True, max_length=max_length)
     inputs = {k: v.to(device) for k, v in inputs.items()}
 
