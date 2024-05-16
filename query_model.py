@@ -34,12 +34,12 @@ def main():
     # Define the questions based on the templates
     question_templates = [
         "What is the VLAN ID for the <VLAN Name>?",
-        "Which subnet is associated with VLAN ID <VLAN ID>?",
+        "Which subnet is associated with VLAN <VLAN ID>?",
         "Identify the gateway for the <VLAN Name>.",
         "Describe the purpose of the <VLAN Name>.",
-        "Explain the purpose of VLAN ID <VLAN ID>.",
+        "Explain the purpose of VLAN <VLAN ID>.",
         "What subnet does <VLAN Name> use?",
-        "What gateway is assigned to VLAN ID <VLAN ID>?",
+        "What gateway is assigned to VLAN <VLAN ID>?",
         "How is the <VLAN Name> utilized?",
         "What function does the <VLAN Name> serve?",
         "What role does VLAN ID <VLAN ID> play?"
