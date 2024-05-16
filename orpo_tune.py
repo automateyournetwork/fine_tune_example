@@ -64,7 +64,7 @@ def load_jsonl_dataset(file_path):
     with open(file_path, 'r') as f:
         return [json.loads(line) for line in f]
 
-jsonl_file_path = "your_dataset.jsonl"  # Replace with your actual JSONL file path
+jsonl_file_path = "training_dataset.jsonl"  # Replace with your actual JSONL file path
 dataset = load_jsonl_dataset(jsonl_file_path)
 
 # Ensure the dataset includes the role context
