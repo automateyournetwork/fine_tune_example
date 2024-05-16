@@ -25,10 +25,29 @@ def save_dataset_as_jsonl(data, filename):
             f.write('\n')
     print(f"Saved {len(data)} entries to '{filename}'")
 
-# Function to generate dataset with a specified number of entries per row of the CSV
-def generate_dataset(llm, csv_file, entries_per_row=25):
-    dataset = []
+# Function to generate dataset for each VLAN row in the CSV
+def generate_dataset_for_vlan(llm, row, question_templates):
+    context = f"VLAN ID - {row['VLAN ID']}, Name - {row['Name']}, Usage - {row['Usage']}"
+    if row['IP Subnet'] != "N/A":
+        context += f", IP Subnet - {row['IP Subnet']}"
+    if row['IP Gateway'] != "N/A":
+        context += f", IP Gateway - {row['IP Gateway']}"
 
+    dataset = []
+    for template in question_templates:
+        question = template.replace("<VLAN Name>", row['Name']).replace("<VLAN ID>", row['VLAN ID'])
+        chosen_answer = generate_chosen_response(question, llm, context)
+        rejected_answer = generate_rejected_response(chosen_answer, llm)
+        dataset.append({
+            'prompt': question,
+            'chosen': f"Answer: {chosen_answer}",
+            'rejected': f"Answer: {rejected_answer}"
+        })
+    return dataset
+
+# Main function to generate datasets for each VLAN row in the CSV with both models
+def main():
+    csv_file = 'training_dataset.csv'
     question_templates = [
         "What is the VLAN ID for the <VLAN Name>?",
         "Which subnet is associated with VLAN ID <VLAN ID>?",
@@ -82,41 +101,20 @@ def generate_dataset(llm, csv_file, entries_per_row=25):
         "Which gateway is used for VLAN ID <VLAN ID>?"
     ]
 
-    with open(csv_file, 'r') as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            context = f"VLAN ID - {row['VLAN ID']}, Name - {row['Name']}, Usage - {row['Usage']}"
-            if row['IP Subnet'] != "N/A":
-                context += f", IP Subnet - {row['IP Subnet']}"
-            if row['IP Gateway'] != "N/A":
-                context += f", IP Gateway - {row['IP Gateway']}"
-
-            template = random.choice(question_templates)
-            question = template.replace("<VLAN Name>", row['Name']).replace("<VLAN ID>", row['VLAN ID'])
-            chosen_answer = generate_chosen_response(question, llm, context)
-            rejected_answer = generate_rejected_response(chosen_answer, llm)
-            dataset.append({
-                'prompt': question,
-                'chosen': f"Answer: {chosen_answer}",
-                'rejected': f"Answer: {rejected_answer}"
-            })
-    return dataset
-
-# Main function to generate datasets with two different models
-def main():
-    csv_file = 'training_dataset.csv'
-
-    # Initialize the Llama model with the specified model names
+    # Initialize the Llama models with the specified model names
     llm_mistral = Ollama(model="mistral")
     llm_llama3 = Ollama(model="llama3")
 
-    # Generate dataset with Mistral model
-    dataset_mistral = generate_dataset(llm_mistral, csv_file)
-    save_dataset_as_jsonl(dataset_mistral, 'training_dataset_mistral.jsonl')
+    with open(csv_file, 'r') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            # Generate dataset for the current VLAN row using Mistral model
+            dataset_mistral = generate_dataset_for_vlan(llm_mistral, row, question_templates)
+            save_dataset_as_jsonl(dataset_mistral, f'training_dataset_mistral_{row["VLAN ID"]}.jsonl')
 
-    # Generate dataset with Llama3 model
-    dataset_llama3 = generate_dataset(llm_llama3, csv_file)
-    save_dataset_as_jsonl(dataset_llama3, 'training_dataset_llama3.jsonl')
+            # Generate dataset for the current VLAN row using Llama3 model
+            dataset_llama3 = generate_dataset_for_vlan(llm_llama3, row, question_templates)
+            save_dataset_as_jsonl(dataset_llama3, f'training_dataset_llama3_{row["VLAN ID"]}.jsonl')
 
 if __name__ == "__main__":
     main()
