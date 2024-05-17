@@ -1,6 +1,5 @@
 import csv
 import json
-import random
 from langchain_community.llms import Ollama
 
 # Function to generate the chosen (correct) answer
@@ -16,20 +15,6 @@ def generate_chosen_response(question, llm, context):
     )
     response = llm.invoke(chosen_prompt)
     print(f"Chosen: {response}")
-    return response.strip()
-
-# Function to generate the rejected (incorrect) answer
-def generate_rejected_response(chosen_response, llm):
-    rejected_prompt = (
-        f"system\n"
-        f"You are a helpful AI assistant for network configuration.\n"
-        f"user\n"
-        f"Here is the chosen (correct) response:\n{chosen_response}\n"
-        f"Could you alter it slightly to be incorrect? Respond with the answer only.\n"
-        f"assistant\n"
-    )
-    response = llm.invoke(rejected_prompt)
-    print(f"Rejected: {response}")
     return response.strip()
 
 # Function to create and save the dataset as JSONL
@@ -52,15 +37,13 @@ def generate_dataset_for_vlan(llm, row, question_templates):
     for template in question_templates:
         question = template.replace("<VLAN Name>", row['Name']).replace("<VLAN ID>", row['VLAN ID'])
         chosen_answer = generate_chosen_response(question, llm, context)
-        rejected_answer = generate_rejected_response(chosen_answer, llm)
         dataset.append({
             'prompt': question,
-            'chosen': f"Answer: {chosen_answer}",
-            'rejected': f"Answer: {rejected_answer}"
+            'chosen': f"Answer: {chosen_answer}"
         })
     return dataset
 
-# Main function to generate datasets for each VLAN row in the CSV with both models
+# Main function to generate datasets for each VLAN row in the CSV and save to a single file
 def main():
     csv_file = 'training_dataset.csv'
     question_templates = [
@@ -120,16 +103,20 @@ def main():
     llm_mistral = Ollama(model="mistral")
     llm_llama3 = Ollama(model="llama3")
 
+    combined_dataset = []
+
     with open(csv_file, 'r') as file:
         reader = csv.DictReader(file)
         for row in reader:
             # Generate dataset for the current VLAN row using Mistral model
             dataset_mistral = generate_dataset_for_vlan(llm_mistral, row, question_templates)
-            save_dataset_as_jsonl(dataset_mistral, f'training_dataset_mistral_{row["VLAN ID"]}.jsonl')
+            combined_dataset.extend(dataset_mistral)
 
             # Generate dataset for the current VLAN row using Llama3 model
             dataset_llama3 = generate_dataset_for_vlan(llm_llama3, row, question_templates)
-            save_dataset_as_jsonl(dataset_llama3, f'training_dataset_llama3_{row["VLAN ID"]}.jsonl')
+            combined_dataset.extend(dataset_llama3)
+
+    save_dataset_as_jsonl(combined_dataset, 'training_dataset.jsonl')
 
 if __name__ == "__main__":
     main()
