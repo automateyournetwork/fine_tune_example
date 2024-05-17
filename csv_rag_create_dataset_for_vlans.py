@@ -5,16 +5,31 @@ from langchain_community.llms import Ollama
 
 # Function to generate the chosen (correct) answer
 def generate_chosen_response(question, llm, context):
-    chosen_prompt = f"This data is being used to fine-tune an LLM. Based on the given information, please provide the chosen answer for this question: {question}\n\nContext: {context}\n\nRespond with the answer only."
+    chosen_prompt = (
+        f"system\n"
+        f"You are a helpful AI assistant for network configuration.\n"
+        f"user\n"
+        f"This data is being used to fine-tune an LLM. Based on the given information, please provide the chosen answer for this question: {question}\n\n"
+        f"Context: {context}\n\n"
+        f"Respond with the answer only.\n"
+        f"assistant\n"
+    )
     response = llm.invoke(chosen_prompt)
     print(f"Chosen: {response}")
     return response.strip()
 
 # Function to generate the rejected (incorrect) answer
 def generate_rejected_response(chosen_response, llm):
-    rejected_prompt = f"Here is the chosen (correct) response:\n{chosen_response}\nCould you alter it slightly to be incorrect? Respond with the answer only."
+    rejected_prompt = (
+        f"system\n"
+        f"You are a helpful AI assistant for network configuration.\n"
+        f"user\n"
+        f"Here is the chosen (correct) response:\n{chosen_response}\n"
+        f"Could you alter it slightly to be incorrect? Respond with the answer only.\n"
+        f"assistant\n"
+    )
     response = llm.invoke(rejected_prompt)
-    print(f"Rejected: { response }")
+    print(f"Rejected: {response}")
     return response.strip()
 
 # Function to create and save the dataset as JSONL
