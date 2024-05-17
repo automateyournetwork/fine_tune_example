@@ -92,12 +92,12 @@ dataset = dataset.shuffle(seed=42)
 
 # Apply chat template with ORPO-specific formatting
 def format_chat_template(row):
-    formatted_entry = {
-        "system": row["context"],
-        "user": row["user"],
-        "assistant": row["assistant"]
-    }
-    return formatted_entry
+    row["prompt"] = (
+        f"system\n{row['context']}\n"
+        f"user\n{row['user']}\n"
+        f"assistant\n{row['assistant']}\n"
+    )
+    return row
 
 print("dataset map")
 dataset = dataset.map(
