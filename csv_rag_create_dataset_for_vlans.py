@@ -4,17 +4,16 @@ from langchain_community.llms import Ollama
 
 # Function to generate the chosen (correct) answer
 def generate_chosen_response(question, llm, context):
-    chosen_prompt = (
-        f"system\n"
-        f"You are a helpful AI assistant for network configuration.\n"
-        f"user\n"
-        f"This data is being used to fine-tune an LLM. Based on the given information, please provide the chosen answer for this question: {question}\n\n"
-        f"Context: {context}\n\n"
-        f"Respond with the answer only.\n"
-        f"assistant\n"
-    )
+    chosen_prompt = f"This data is being used to fine-tune an LLM. Based on the given information, please provide the chosen answer for this question: {question}\n\nContext: {context}\n\nRespond with the answer only."
     response = llm.invoke(chosen_prompt)
     print(f"Chosen: {response}")
+    return response.strip()
+
+# Function to generate the rejected (incorrect) answer
+def generate_rejected_response(chosen_response, llm):
+    rejected_prompt = f"Here is the chosen (correct) response:\n{chosen_response}\nCould you alter it slightly to be incorrect? Respond with the answer only."
+    response = llm.invoke(rejected_prompt)
+    print(f"Rejected: {response}")
     return response.strip()
 
 # Function to create and save the dataset as JSONL
@@ -37,15 +36,15 @@ def generate_dataset_for_vlan(llm, row, question_templates):
     for template in question_templates:
         question = template.replace("<VLAN Name>", row['Name']).replace("<VLAN ID>", row['VLAN ID'])
         chosen_answer = generate_chosen_response(question, llm, context)
-        entry = {
-            'system': "You are a helpful AI assistant for network configuration.",
-            'user': question,
-            'assistant': chosen_answer
-        }
-        dataset.append(entry)
+        rejected_answer = generate_rejected_response(chosen_answer, llm)
+        dataset.append({
+            'prompt': question,
+            'chosen': chosen_answer,
+            'rejected': rejected_answer
+        })
     return dataset
 
-# Main function to generate datasets for each VLAN row in the CSV and save to a single file
+# Main function to generate datasets for each VLAN row in the CSV with both models
 def main():
     csv_file = 'training_dataset.csv'
     question_templates = [

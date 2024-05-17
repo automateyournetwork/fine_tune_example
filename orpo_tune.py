@@ -1,9 +1,8 @@
 import gc
 import os
 import torch
-import json
 from datasets import load_dataset
-from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training, PeftModel
+from peft import LoraConfig, prepare_model_for_kbit_training, PeftModel
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -21,7 +20,7 @@ else:
 
 # Model
 base_model = "meta-llama/Meta-Llama-3-8B"
-new_model = "aicvd"
+new_model = "OrpoLlama-3-8B"
 
 # QLoRA config
 bnb_config = BitsAndBytesConfig(
@@ -56,9 +55,6 @@ model = AutoModelForCausalLM.from_pretrained(
 model, tokenizer = setup_chat_format(model, tokenizer)
 model = prepare_model_for_kbit_training(model)
 
-# Define the role context
-role_context = "You are an expert on the Cisco Validated Design FlexPod Datacenter with Generative AI Inferencing Design and Deployment Guide."
-
 # Load dataset from JSONL file
 def load_jsonl_dataset(file_path):
     with open(file_path, 'r') as f:
@@ -67,14 +63,6 @@ def load_jsonl_dataset(file_path):
 jsonl_file_path = "training_dataset.jsonl"  # Replace with your actual JSONL file path
 dataset = load_jsonl_dataset(jsonl_file_path)
 
-# Ensure the dataset includes the role context
-def add_role_context(dataset, role_context):
-    for entry in dataset:
-        entry['context'] = role_context
-    return dataset
-
-dataset_with_role = add_role_context(dataset, role_context)
-
 # Save the modified dataset back to JSONL
 def save_jsonl_dataset(dataset, file_path):
     with open(file_path, 'w') as f:
@@ -82,7 +70,7 @@ def save_jsonl_dataset(dataset, file_path):
             f.write(json.dumps(entry) + '\n')
 
 training_dataset_path = "training_dataset.jsonl"
-save_jsonl_dataset(dataset_with_role, training_dataset_path)
+save_jsonl_dataset(dataset, training_dataset_path)
 
 # Create and configure the dataset for training
 print("dataset load")
@@ -93,9 +81,9 @@ dataset = dataset.shuffle(seed=42)
 # Apply chat template with ORPO-specific formatting
 def format_chat_template(row):
     row["prompt"] = (
-        f"system\n{row['context']}\n"
-        f"user\n{row['user']}\n"
-        f"assistant\n{row['assistant']}\n"
+        f"system\n{row['system']}\n"
+        f"user\n{row['prompt']}\n"
+        f"assistant\n{row['chosen']}\n"
     )
     return row
 
