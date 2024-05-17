@@ -37,10 +37,12 @@ def generate_dataset_for_vlan(llm, row, question_templates):
     for template in question_templates:
         question = template.replace("<VLAN Name>", row['Name']).replace("<VLAN ID>", row['VLAN ID'])
         chosen_answer = generate_chosen_response(question, llm, context)
-        dataset.append({
-            'prompt': question,
-            'chosen': f"Answer: {chosen_answer}"
-        })
+        entry = {
+            'system': "You are a helpful AI assistant for network configuration.",
+            'user': question,
+            'assistant': chosen_answer
+        }
+        dataset.append(entry)
     return dataset
 
 # Main function to generate datasets for each VLAN row in the CSV and save to a single file
