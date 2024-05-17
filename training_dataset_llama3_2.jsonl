@@ -1,0 +1,50 @@
+{"prompt": "What is the VLAN ID for the Native-VLAN?", "chosen": "Answer: 2", "rejected": "Answer: 3"}
+{"prompt": "Which subnet is associated with VLAN ID 2?", "chosen": "Answer: N/A", "rejected": "Answer: 10.5.1.1"}
+{"prompt": "Identify the gateway for the Native-VLAN.", "chosen": "Answer: None", "rejected": "Answer: 192.168.1.100"}
+{"prompt": "Describe the purpose of the Native-VLAN.", "chosen": "Answer: The purpose of the Native-VLAN is to use VLAN 2 as the default or \"native\" VLAN for a network device, instead of the default VLAN 1.", "rejected": "Answer: Native-VLAN is used to assign VLAN 3 as the default VLAN on all ports of a network device by default."}
+{"prompt": "Explain the purpose of VLAN ID 2.", "chosen": "Answer: The purpose of VLAN ID 2 is to use it as the native VLAN instead of the default VLAN (1).", "rejected": "Answer: The purpose of VLAN ID 2 is to create a new network segment for management devices."}
+{"prompt": "What subnet does Native-VLAN use?", "chosen": "Answer: No subnet is specified for Native-VLAN.", "rejected": "Answer: The network has been successfully configured!"}
+{"prompt": "What gateway is assigned to VLAN ID 2?", "chosen": "Answer: None", "rejected": "Answer: Firewall"}
+{"prompt": "How is the Native-VLAN utilized?", "chosen": "Answer: VLAN 2 is used as the native VLAN.", "rejected": "Answer: VLAN 10 is used as the native VLAN."}
+{"prompt": "What function does the Native-VLAN serve?", "chosen": "Answer: Tagging mechanism for packets to identify which VLAN they belong to.", "rejected": "Answer: Router IDentifier System"}
+{"prompt": "What role does VLAN ID 2 play?", "chosen": "Answer: Native VLAN.", "rejected": "Answer: Internet VLAN."}
+{"prompt": "Which IP subnet is configured for Native-VLAN?", "chosen": "Answer: N/A", "rejected": "Answer: Yes"}
+{"prompt": "Specify the gateway IP for Native-VLAN.", "chosen": "Answer: 10.0.0.1", "rejected": "Answer: 10.0.0.2"}
+{"prompt": "For what purpose is the Native-VLAN used?", "chosen": "Answer: Use as the native VLAN for a trunk port or interface.", "rejected": "Answer: Use as the native VLAN for all access ports."}
+{"prompt": "What is the VLAN ID assigned to Native-VLAN?", "chosen": "Answer: VLAN ID assigned to Native-VLAN is: 2", "rejected": "Answer: VLAN ID assigned to Native-VLAN is: 5"}
+{"prompt": "What is the subnet mask for VLAN ID 2?", "chosen": "Answer: 255.0.0.0", "rejected": "Answer: 256.1.2.3"}
+{"prompt": "What is the default gateway for the Native-VLAN?", "chosen": "Answer: None", "rejected": "Answer: \"Gateway\""}
+{"prompt": "What is the primary function of the Native-VLAN?", "chosen": "Answer: Use as the default VLAN for trunking.", "rejected": "Answer: Use as the default VLAN for routing."}
+{"prompt": "What is the primary purpose of VLAN ID 2?", "chosen": "Answer: Use as native VLAN instead of default VLAN (1)", "rejected": "Answer: Set VLAN 1 as a trunk port."}
+{"prompt": "Which subnet is allocated to Native-VLAN?", "chosen": "Answer: Subnet is not allocated to Native-VLAN as there is no IP subnet provided for Native-VLAN.", "rejected": "Answer: Subnet is being used incorrectly on Native-VLAN because it is trying to assign an IP address range that is already in use elsewhere on the network."}
+{"prompt": "Identify the default gateway for VLAN ID 2.", "chosen": "Answer: None", "rejected": "Answer: \"10.1.0.1\""}
+{"prompt": "What is the assigned VLAN ID for the Native-VLAN?", "chosen": "Answer: VLAN ID 2", "rejected": "Answer: VLAN ID 12345"}
+{"prompt": "What IP subnet does VLAN ID 2 correspond to?", "chosen": "Answer: 192.168.1.0/24", "rejected": "Answer: 192.168.1.128/20"}
+{"prompt": "What is the configured gateway for the Native-VLAN?", "chosen": "Answer: None", "rejected": "Answer: ISP"}
+{"prompt": "What is the main purpose of the Native-VLAN?", "chosen": "Answer: Use as the default VLAN for untagged packets and trunk ports.", "rejected": "Answer: Set as the default VLAN for all devices."}
+{"prompt": "Which subnet is utilized by VLAN ID 2?", "chosen": "Answer: There is no subnet associated with VLAN ID 2.", "rejected": "Answer: The router is currently configured to support up to 4094 subnets per VLAN."}
+{"prompt": "What VLAN ID is used for Native-VLAN in FlexPod?", "chosen": "Answer: 2", "rejected": "Answer: 4"}
+{"prompt": "What subnet is used by Native-VLAN for FlexPod?", "chosen": "Answer: Subnet 0.0.0.0/32 or ::/128 is used by Native-VLAN for FlexPod.", "rejected": "Answer: Subnet 192.168.1.0/24"}
+{"prompt": "What is the gateway IP for VLAN ID 2?", "chosen": "Answer: None", "rejected": "Answer: 192.168.1.1"}
+{"prompt": "What does the Native-VLAN VLAN do?", "chosen": "Answer: It assigns VLAN 2 as the native VLAN instead of the default VLAN 1.", "rejected": "Answer: It configures the switch to use a random VLAN number for all ports."}
+{"prompt": "What is the function of VLAN ID 2?", "chosen": "Answer: To use VLAN 2 as the native VLAN instead of the default VLAN (1).", "rejected": "Answer: To use VLAN 10 as the native VLAN."}
+{"prompt": "What subnet is assigned to Native-VLAN?", "chosen": "Answer: No subnet is assigned to Native-VLAN since the information provided indicates that \"IP Subnet\" is \"N/A\".", "rejected": "Answer: The subnet 192.168.1.0-192.168.1.255 has been assigned to Native-VLAN."}
+{"prompt": "What is the default gateway for VLAN ID 2?", "chosen": "Answer: None", "rejected": "Answer: Firewall"}
+{"prompt": "How is VLAN ID 2 utilized?", "chosen": "Answer: VLAN 2 is used as the native VLAN instead of default VLAN (1).", "rejected": "Answer: VLAN 5 is used as the native VLAN."}
+{"prompt": "What is the IP subnet for Native-VLAN?", "chosen": "Answer: 192.168.1.0/24", "rejected": "Answer: 192.168.1.50/31"}
+{"prompt": "What gateway does Native-VLAN use?", "chosen": "Answer: None", "rejected": "Answer: Public DNS"}
+{"prompt": "What is the purpose of VLAN ID 2 in FlexPod?", "chosen": "Answer: Use VLAN 2 as the default/native VLAN for the FlexPod environment.", "rejected": "Answer: VLAN 10"}
+{"prompt": "Which IP subnet is used for VLAN ID 2?", "chosen": "Answer: N/A", "rejected": "Answer: 192.168.1.100"}
+{"prompt": "What is the purpose of the VLAN ID 2?", "chosen": "Answer: Use VLAN 2 as the native VLAN instead of default VLAN (1).", "rejected": "Answer: Use VLAN 10 as the native VLAN instead of default VLAN (1)."}
+{"prompt": "What is the role of Native-VLAN in FlexPod?", "chosen": "Answer: Native-VLAN is used to define the default VLAN for a FlexPod environment, replacing the default VLAN ID of 1.", "rejected": "Answer: Native-VLAN is used to define the default subnet mask for a FlexPod environment."}
+{"prompt": "Identify the subnet for VLAN ID 2.", "chosen": "Answer: N/A", "rejected": "Answer: Yes"}
+{"prompt": "What is the purpose of Native-VLAN VLAN?", "chosen": "Answer: To define the default VLAN for a trunk port.", "rejected": "Answer: To configure the IP address of a VLAN."}
+{"prompt": "What is the gateway for Native-VLAN in FlexPod?", "chosen": "Answer: None", "rejected": "Answer: 192.168.1.100"}
+{"prompt": "What is the VLAN ID of Native-VLAN in FlexPod?", "chosen": "Answer: 2", "rejected": "Answer: 3"}
+{"prompt": "What is the IP subnet of VLAN ID 2?", "chosen": "Answer: N/A", "rejected": "Answer: Apache HTTP Server"}
+{"prompt": "Explain the role of Native-VLAN in FlexPod.", "chosen": "Answer: In a FlexPod architecture, the Native-VLAN (VLAN ID 2) serves as the management VLAN for all hosts and devices in the environment, replacing the default VLAN 1. This allows for improved security and isolation of management traffic from production networks.", "rejected": "Answer: In a FlexPod architecture, the Native-VLAN (VLAN ID 2) serves as the data VLAN for all hosts and devices in the environment, replacing the default VLAN 1. This allows for improved security and isolation of data traffic from management networks."}
+{"prompt": "What subnet does VLAN ID 2 use?", "chosen": "Answer: VLAN 2 uses subnet N/A.", "rejected": "Answer: VLAN 2 uses subnet 10.1.0/24."}
+{"prompt": "What is the primary role of Native-VLAN?", "chosen": "Answer: To use a specific VLAN as the native VLAN instead of the default VLAN (VLAN 1).", "rejected": "Answer: To use VLAN 5 as the native VLAN regardless of the device's physical port."}
+{"prompt": "What function does VLAN ID 2 serve in FlexPod?", "chosen": "Answer: Use as a native VLAN instead of default VLAN (1).", "rejected": "Answer: Configure the interface as a trunk port with all VLANs enabled by default."}
+{"prompt": "What is the assigned IP subnet for Native-VLAN?", "chosen": "Answer: N/A", "rejected": "Answer: 192.168.1.100"}
+{"prompt": "Which gateway is used for VLAN ID 2?", "chosen": "Answer: None", "rejected": "Answer: 192.168.1.100"}
