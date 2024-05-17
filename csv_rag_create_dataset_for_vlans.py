@@ -1,5 +1,6 @@
 import csv
 import json
+import random
 from langchain_community.llms import Ollama
 
 # Function to generate the chosen (correct) answer
@@ -110,12 +111,14 @@ def main():
         reader = csv.DictReader(file)
         for row in reader:
             # Generate dataset for the current VLAN row using Mistral model
-            dataset_mistral = generate_dataset_for_vlan(llm_mistral, row, question_templates)
-            combined_dataset.extend(dataset_mistral)
+            for _ in range(10):  # Repeat to create more entries
+                dataset_mistral = generate_dataset_for_vlan(llm_mistral, row, question_templates)
+                combined_dataset.extend(dataset_mistral)
 
             # Generate dataset for the current VLAN row using Llama3 model
-            dataset_llama3 = generate_dataset_for_vlan(llm_llama3, row, question_templates)
-            combined_dataset.extend(dataset_llama3)
+            for _ in range(10):  # Repeat to create more entries
+                dataset_llama3 = generate_dataset_for_vlan(llm_llama3, row, question_templates)
+                combined_dataset.extend(dataset_llama3)
 
     save_dataset_as_jsonl(combined_dataset, 'training_dataset.jsonl')
 
