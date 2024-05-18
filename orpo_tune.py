@@ -79,13 +79,11 @@ dataset = load_dataset('json', data_files={'train': training_dataset_path}, spli
 print("dataset shuffle")
 dataset = dataset.shuffle(seed=42)
 
-# Apply chat template with ORPO-specific formatting
 def format_chat_template(row):
-    row["prompt"] = (
-        f"system\n{row['system']}\n"
-        f"user\n{row['prompt']}\n"
-        f"assistant\n{row['chosen']}\n"
-    )
+    role = "You are an expert on the Cisco Validated Design FlexPod Datacenter with Generative AI Inferencing Design and Deployment Guide."
+    row["chosen"] = f'{role} {row["chosen"]}'
+    row["rejected"] = f'{role} {row["rejected"]}'
+    row["role"] = role
     return row
 
 print("dataset map")
